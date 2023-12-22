@@ -30,7 +30,7 @@ public class Carrier {
     )
     private Set<Route> routes;
 
-    @OneToMany(mappedBy = "carrier",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "carrier",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference
     private Set<Truck> trucks;
 
