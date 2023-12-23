@@ -32,10 +32,10 @@ public class Truck {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "truck_id", referencedColumnName = "id")
-    private Truck_Status status;
+    private TruckStatus status;
 
     @ManyToOne
     @JoinColumn(name="carrier_id",referencedColumnName = "id")
-    @JsonBackReference
+    @JsonBackReference(value = "carrier-truck")
     private Carrier carrier;
 }

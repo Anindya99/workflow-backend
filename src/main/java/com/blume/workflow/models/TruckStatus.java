@@ -10,7 +10,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-public class Truck_Status {
+public class TruckStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;

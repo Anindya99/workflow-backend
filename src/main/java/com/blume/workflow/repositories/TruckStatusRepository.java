@@ -1,8 +1,7 @@
 package com.blume.workflow.repositories;
 
-import com.blume.workflow.models.TruckInfo;
-import com.blume.workflow.models.Truck_Status;
+import com.blume.workflow.models.TruckStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface TruckStatusRepository extends JpaRepository<Truck_Status,Long> {
+public interface TruckStatusRepository extends JpaRepository<TruckStatus,Long> {
 }

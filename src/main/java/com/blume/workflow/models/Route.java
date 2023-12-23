@@ -1,10 +1,13 @@
 package com.blume.workflow.models;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import lombok.*;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -21,4 +24,8 @@ public class Route {
 
     @ManyToMany(mappedBy = "routes")
     private Set<Carrier> carriers;
+
+    @OneToMany(mappedBy = "route")
+    @JsonManagedReference(value="route-workOrder")
+    private List<WorkOrder> workOrder;
 }

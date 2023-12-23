@@ -15,8 +15,8 @@ public class WorkFlowService {
     @Autowired
     private ModelMapper modelMapper;
 
-    public WorkFlow saveWorkFlow(CreateWorkFlowRequestDTO createWorkFlowRequestDTO){
-        WorkFlow newWorkFlow= modelMapper.map(createWorkFlowRequestDTO,WorkFlow.class);
+    public WorkFlow saveWorkFlow(CreateWorkFlowRequestDTO createWorkFlowRequestDTO) {
+        WorkFlow newWorkFlow = modelMapper.map(createWorkFlowRequestDTO, WorkFlow.class);
         return workFlowRepository.save(newWorkFlow);
     }
 

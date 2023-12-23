@@ -8,10 +8,7 @@ public enum WorkFlowPropertiesEnum {
     BUDGET("BUDGET"),
     CONFIGURATION("CONFIGURATION");
 
-    private final
-
-
-    String workFlow;
+    private final String workFlow;
     WorkFlowPropertiesEnum(String workFlow){
         this.workFlow= workFlow;
     }
