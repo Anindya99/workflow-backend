@@ -22,7 +22,7 @@ public class WorkOrderController {
         return ResponseEntity.status(HttpStatus.CREATED).body(newWorkOrder);
     }
 
-    @GetMapping("/{workOrderId}/save-carriers")
+    @GetMapping("/{workOrderId}/status")
     public void saveCarriersForWorkOrder(@PathVariable("workOrderId") long workOrderId ){
 
     }
