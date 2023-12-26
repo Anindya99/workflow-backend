@@ -17,7 +17,7 @@ public class WorkOrderStatus {
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    private WorkOrderStatusEnum status= WorkOrderStatusEnum.ASSIGNED;
+    private WorkOrderStatusEnum status= WorkOrderStatusEnum.UNASSIGNED;
 
     @Builder.Default
     private int workFlowCurrentStep=0;

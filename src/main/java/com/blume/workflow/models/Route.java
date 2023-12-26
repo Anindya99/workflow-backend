@@ -28,4 +28,8 @@ public class Route {
     @OneToMany(mappedBy = "route")
     @JsonManagedReference(value="route-workOrder")
     private List<WorkOrder> workOrder;
+
+    @OneToMany(mappedBy = "truckRoute")
+    @JsonManagedReference(value = "current-route-truck")
+    private List<TruckStatus> trucks;
 }

@@ -32,7 +32,7 @@ public class Carrier {
 
     @OneToMany(mappedBy = "carrier", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonManagedReference(value = "carrier-truck")
-    private Set<Truck> trucks;
+    private List<Truck> trucks;
 
     @OneToMany(mappedBy = "carrier")
     @JsonManagedReference(value = "workOrder-Available-Carrier")
