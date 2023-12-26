@@ -28,12 +28,13 @@ public class CarrierService {
     public void getCarriersForWorkOrder(long workOrderId){
         WorkOrder workOrder= this.workOrderRepository.findById(workOrderId).orElseThrow(()-> new NoSuchElementException("No work order found with id- "+ workOrderId));
         Route route= workOrder.getRoute();
-        int budget= workOrder.getBudget();
-        int weight= workOrder.getWeight();
+        List<Carrier> filteredCarriersByRoute= this.carrierRepository.findCarriersByRoute(route.getId().getOrigin(),route.getId().getDestination());
+
         ItemTypeEnum itemType= workOrder.getItemType();
         LoadTypeEnum loadType= workOrder.getLoadType();
+        int weight= workOrder.getWeight();
+        int budget= workOrder.getBudget();
 
-        List<Carrier> filteredCarriersByRoute= this.carrierRepository.findCarriersByRoute(route.getId().getOrigin(),route.getId().getDestination());
-        System.out.println(filteredCarriersByRoute);
+
     }
 }

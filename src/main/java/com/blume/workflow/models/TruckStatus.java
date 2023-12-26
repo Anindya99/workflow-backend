@@ -33,7 +33,7 @@ public class TruckStatus {
                     @JoinColumn(name = "route_origin", referencedColumnName = "origin"),
                     @JoinColumn(name = "route_destination", referencedColumnName = "destination")}
     )
-    @JsonBackReference(value="current-route-truck")
+    @JsonBackReference(value="current-truck-route")
     private Route truckRoute;
 
     @OneToOne(mappedBy = "status")

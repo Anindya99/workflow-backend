@@ -34,7 +34,7 @@ public class Carrier {
     @JsonManagedReference(value = "carrier-truck")
     private List<Truck> trucks;
 
-    @OneToMany(mappedBy = "carrier")
+    /*@OneToMany(mappedBy = "carrier")
     @JsonManagedReference(value = "workOrder-Available-Carrier")
-    private List<WorkOrderAvailableCarriers> workOrderAvailableCarriersList;
+    private List<WorkOrderAvailableCarriers> workOrderAvailableCarriersList;*/
 }

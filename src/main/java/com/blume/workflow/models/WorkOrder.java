@@ -50,6 +50,6 @@ public class WorkOrder {
     private WorkOrderStatus workOrderStatus;
 
     @OneToMany(mappedBy = "workOrder")
-    @JsonManagedReference(value = "workOrder-Available-Carrier-List")
-    private List<WorkOrderAvailableCarriers> workOrderAvailableCarriersList;
+    @JsonManagedReference(value = "workOrder-Assignable-Carrier-List")
+    private List<WorkOrderAssignableCarriers> workOrderAssignableCarriersList;
 }

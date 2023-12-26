@@ -30,6 +30,6 @@ public class Route {
     private List<WorkOrder> workOrder;
 
     @OneToMany(mappedBy = "truckRoute")
-    @JsonManagedReference(value = "current-route-truck")
+    @JsonManagedReference(value = "current-truck-route")
     private List<TruckStatus> trucks;
 }
