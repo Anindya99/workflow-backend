@@ -18,6 +18,8 @@ public class WorkOrderAssignableCarriers {
     @Id
     private WorkOrderAssignableCarriersId id;
 
+    private int cost;
+
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private WorkOrderStatusEnum status= WorkOrderStatusEnum.UNASSIGNED;

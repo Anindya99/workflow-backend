@@ -1,5 +1,6 @@
 package com.blume.workflow.models;
 
+import com.blume.workflow.enums.ItemTypeEnum;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -38,4 +39,12 @@ public class Truck {
     @JoinColumn(name="carrier_id",referencedColumnName = "id")
     @JsonBackReference(value = "carrier-truck")
     private Carrier carrier;
+
+
+    public int getTotalCostForTruck(int distance,int weight, ItemTypeEnum itemType){
+        for(TruckInfo info: this.getInfo()){
+            if(info.getItemType()==itemType) return info.getRatePerKmPerKg()*weight*distance+ info.getOtherCharges();
+        }
+        return 0;
+    }
 }

@@ -1,17 +1,23 @@
 package com.blume.workflow.services;
 
+import com.blume.workflow.controllers.dtos.AssignableCarriersResponseDTO;
 import com.blume.workflow.enums.ItemTypeEnum;
 import com.blume.workflow.enums.LoadTypeEnum;
 import com.blume.workflow.models.Carrier;
 import com.blume.workflow.models.Route;
+import com.blume.workflow.models.Truck;
 import com.blume.workflow.models.WorkOrder;
 import com.blume.workflow.repositories.CarrierRepository;
 import com.blume.workflow.repositories.WorkOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.sound.midi.Track;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 public class CarrierService {
@@ -24,20 +30,39 @@ public class CarrierService {
         return this.carrierRepository.save(carrier);
     }
 
-    public void getCarriersForWorkOrder(long workOrderId) {
+    public List<AssignableCarriersResponseDTO> getCarriersForWorkOrder(long workOrderId) {
         WorkOrder workOrder = this.workOrderRepository.findById(workOrderId)
                 .orElseThrow(() -> new NoSuchElementException("No work order found with id- " + workOrderId));
-        Route route = workOrder.getRoute();
+        Route workOrderRoute = workOrder.getRoute();
         List<Carrier> filteredCarriersByRoute = this.carrierRepository
-                .findCarriersByRoute(route.getId().getOrigin(), route.getId().getDestination());
+                .findCarriersByRoute(workOrderRoute.getId().getOrigin(), workOrderRoute.getId().getDestination());
 
         ItemTypeEnum itemType = workOrder.getItemType();
         LoadTypeEnum loadType = workOrder.getLoadType();
-        int weight = workOrder.getWeight();
+        int grossWeight = workOrder.getWeight();
         int budget = workOrder.getBudget();
 
         List<Carrier> filteredCarriersByItemType= this.getFilterCarriersByItemType(filteredCarriersByRoute,itemType);
+        List<Carrier> filteredCarriersByLoadType=
+                this.getFilteredCarriersByLoadType(filteredCarriersByItemType,loadType,workOrderRoute);
+        List<Carrier> filteredCarriersByGrossWeight=
+                this.getFilteredCarriersByGrossWeight(
+                        filteredCarriersByLoadType,
+                        grossWeight,
+                        itemType,
+                        loadType,
+                        workOrderRoute);
+        if(budget==0) return this.convertToAssignableCarriersDto(filteredCarriersByGrossWeight);
+        List<Carrier> filteredCarriersByBudget= this.getFilteredCarriersByBudget(
+                filteredCarriersByGrossWeight,
+                budget,
+                grossWeight,
+                itemType,
+                loadType,
+                workOrderRoute
+        );
 
+        return this.convertToAssignableCarriersDto(filteredCarriersByBudget);
     }
 
     private List<Carrier> getFilterCarriersByItemType(List<Carrier> carriers, ItemTypeEnum itemType) {
@@ -53,16 +78,101 @@ public class CarrierService {
         return filteredList;
     }
 
-    /*private List<Carrier> getFilteredCarriersByLoadType(List<Carrier> carriers, LoadTypeEnum loadType){
+    private List<Carrier> getFilteredCarriersByLoadType(List<Carrier> carriers, LoadTypeEnum loadType, Route workOrderRoute){
         List<Carrier> filteredList;
         filteredList = carriers.stream()
                 .filter(carrier ->
                         carrier.getTrucks().stream()
-                                .flatMap(truck -> truck.getInfo().stream())
-                                .anyMatch(info -> info.getItemType() == itemType)
+                                .anyMatch(truck-> {
+                                    if(loadType==LoadTypeEnum.FCL) return truck.getStatus().getTotalCurrentLoad()==0;
+                                    else{
+                                        if(truck.getStatus().getTotalCurrentLoad()==0) return true;
+                                        return truck.getStatus().getTotalCurrentLoad()< truck.getCapacity()
+                                                && truck.getStatus().getTruckRoute().getId().getOrigin()
+                                                .equals( workOrderRoute.getId().getOrigin())
+                                                && truck.getStatus().getTruckRoute().getId().getDestination()
+                                                .equals(workOrderRoute.getId().getDestination());
+                                    }
+                                })
                 )
                 .toList();
 
         return filteredList;
-    }*/
+    }
+
+    private List<Carrier> getFilteredCarriersByGrossWeight(List<Carrier> carriers,
+                                                           int grossWeight,
+                                                           ItemTypeEnum itemType,
+                                                           LoadTypeEnum loadType,
+                                                           Route workOrderRoute){
+        List<Carrier> filteredList= new ArrayList<>();
+        for(Carrier carrier: carriers){
+            int availableWeightInAllTrucks= 0;
+            for(Truck truck: carrier.getTrucks()){
+                if(loadType==LoadTypeEnum.FCL){
+                    if(truck.getStatus().getTotalCurrentLoad()==0) availableWeightInAllTrucks+= truck.getCapacity();
+                }
+                else{
+                    if(truck.getStatus().getItemType().equals(itemType)
+                    && truck.getStatus().getTruckRoute().getId().getOrigin()
+                            .equals( workOrderRoute.getId().getOrigin())
+                    && truck.getStatus().getTruckRoute().getId().getDestination()
+                            .equals(workOrderRoute.getId().getDestination()))
+                        availableWeightInAllTrucks+= truck.getCapacity();
+                }
+                if(availableWeightInAllTrucks>=grossWeight) filteredList.add(carrier);
+            }
+        }
+        return filteredList;
+    }
+
+    private List<Carrier> getFilteredCarriersByBudget(List<Carrier> carriers,
+                                                      int budget,
+                                                      int grossWeight,
+                                                      ItemTypeEnum itemType,
+                                                      LoadTypeEnum loadType,
+                                                      Route workOrderRoute){
+        List<Carrier> filteredList= new ArrayList<>();
+
+        for(Carrier carrier:carriers){
+            List<Truck> sortedTrucksBasedOnCost= carrier.getTrucks().stream()
+                    .sorted(Comparator.comparingInt(truck ->
+                            truck.getInfo().stream()
+                                    .mapToInt(info -> info.getRatePerKmPerKg() + info.getOtherCharges())
+                                    .sum()
+                    ))
+                    .toList();
+            int weightLeftToConsolidate= grossWeight;
+            int currentCost=0;
+            for(Truck truck: sortedTrucksBasedOnCost){
+                if(loadType==LoadTypeEnum.FCL){
+                    if(truck.getStatus().getTotalCurrentLoad()!=0) continue;
+                }
+                weightLeftToConsolidate-= Math.min(truck.getCapacity(),weightLeftToConsolidate);
+                currentCost+= truck.getTotalCostForTruck(
+                        workOrderRoute.getDistance(),
+                        Math.min(truck.getCapacity(),weightLeftToConsolidate),
+                        itemType
+                );
+                if(currentCost>budget || weightLeftToConsolidate==0) break;
+            }
+            if(currentCost<=budget && weightLeftToConsolidate==0) filteredList.add(carrier);
+        }
+
+        return filteredList;
+    }
+
+    private List<AssignableCarriersResponseDTO> convertToAssignableCarriersDto(List<Carrier> carriers){
+        List<AssignableCarriersResponseDTO> finalList= new ArrayList<>();
+        for(Carrier carrier: carriers){
+            finalList.add(
+                    AssignableCarriersResponseDTO.builder()
+                            .id(carrier.getId())
+                            .name(carrier.getName())
+                            .build()
+            );
+        }
+        return finalList;
+    }
 }
+

@@ -34,6 +34,7 @@ public class TruckStatus {
                     @JoinColumn(name = "route_destination", referencedColumnName = "destination")}
     )
     @JsonBackReference(value="current-truck-route")
+    //check the route when truck is not empty i.e. for LCL check if the truck is in same route as work order
     private Route truckRoute;
 
     @OneToOne(mappedBy = "status")

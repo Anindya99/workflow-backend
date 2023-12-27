@@ -13,7 +13,7 @@ public class TruckInfo {
     @Enumerated(EnumType.STRING)
     private ItemTypeEnum itemType;
 
-    private  int ratePerKm;
+    private  int ratePerKmPerKg;
 
     private int otherCharges;
 

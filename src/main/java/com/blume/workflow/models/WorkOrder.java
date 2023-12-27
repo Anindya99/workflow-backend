@@ -28,7 +28,8 @@ public class WorkOrder {
     @Enumerated(EnumType.STRING)
     private LoadTypeEnum loadType;
 
-    private int budget;
+    @Builder.Default
+    private int budget=0;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinTable(
@@ -49,7 +50,7 @@ public class WorkOrder {
     @OneToOne(mappedBy = "workOrder")
     private WorkOrderStatus workOrderStatus;
 
-    @OneToMany(mappedBy = "workOrder")
+    @OneToMany(mappedBy = "id.workOrder",cascade = CascadeType.ALL)
     @JsonManagedReference(value = "workOrder-Assignable-Carrier-List")
     private List<WorkOrderAssignableCarriers> workOrderAssignableCarriersList;
 }

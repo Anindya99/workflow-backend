@@ -1,5 +1,6 @@
 package com.blume.workflow.controllers;
 
+import com.blume.workflow.controllers.dtos.AssignableCarriersResponseDTO;
 import com.blume.workflow.models.Carrier;
 import com.blume.workflow.services.CarrierService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/carrier")
@@ -20,7 +23,7 @@ public class CarrierController {
     }
 
     @GetMapping("/{workOrderId}/available-carriers")
-    public void getCarriersForWorkOrder(@PathVariable("workOrderId") long workOrderId){
-        this.carrierService.getCarriersForWorkOrder(workOrderId);
+    public List<AssignableCarriersResponseDTO> getCarriersForWorkOrder(@PathVariable("workOrderId") long workOrderId){
+        return this.carrierService.getCarriersForWorkOrder(workOrderId);
     }
 }
