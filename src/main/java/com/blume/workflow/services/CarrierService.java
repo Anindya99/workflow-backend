@@ -13,10 +13,7 @@ import com.blume.workflow.repositories.WorkOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 @Service
 public class CarrierService {
@@ -178,7 +175,7 @@ public class CarrierService {
             }
             if(currentCost<=budget && weightLeftToConsolidate==0) filteredList.add(convertToAssignableCarriersCostSortedDto(carrier,currentCost));
         }
-
+        filteredList.sort(Comparator.comparingInt(AssignableCarriersCostSortedResponseDTO::getCost));
         return filteredList;
     }
 
