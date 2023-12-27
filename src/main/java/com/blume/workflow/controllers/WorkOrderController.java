@@ -23,7 +23,7 @@ public class WorkOrderController {
     }
 
     @GetMapping("/{workOrderId}/status")
-    public void saveCarriersForWorkOrder(@PathVariable("workOrderId") long workOrderId ){
+    public void getStatusOfWorkOrder(@PathVariable("workOrderId") long workOrderId ){
 
     }
 }

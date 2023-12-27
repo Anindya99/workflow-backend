@@ -8,10 +8,12 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AssignableCarriersResponseDTO {
+public class AssignableCarriersCostSortedResponseDTO {
     private long id;
 
     private String name;
+
+    private int cost;
 
     @Builder.Default
     private WorkOrderStatusEnum status= WorkOrderStatusEnum.UNASSIGNED;

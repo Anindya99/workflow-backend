@@ -24,4 +24,13 @@ public class WorkOrderAssignableCarriers {
     @Builder.Default
     private WorkOrderStatusEnum status= WorkOrderStatusEnum.UNASSIGNED;
 
+    @MapsId("workOrderId")
+    @ManyToOne
+    @JsonBackReference(value = "workOrder-Assignable-Carrier-List")
+    private WorkOrder workOrder;
+
+    @MapsId("carrierId")
+    @ManyToOne
+    private Carrier carrier;
+
 }

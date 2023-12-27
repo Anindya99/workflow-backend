@@ -47,10 +47,10 @@ public class WorkOrder {
     @JsonBackReference(value="workFlow-workOrder")
     private WorkFlow workFlow;
 
-    @OneToOne(mappedBy = "workOrder")
+    @OneToOne(mappedBy = "workOrder",cascade = CascadeType.ALL)
     private WorkOrderStatus workOrderStatus;
 
-    @OneToMany(mappedBy = "id.workOrder",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "workOrder",cascade = CascadeType.ALL)
     @JsonManagedReference(value = "workOrder-Assignable-Carrier-List")
     private List<WorkOrderAssignableCarriers> workOrderAssignableCarriersList;
 }

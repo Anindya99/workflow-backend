@@ -43,8 +43,12 @@ public class Truck {
 
     public int getTotalCostForTruck(int distance,int weight, ItemTypeEnum itemType){
         for(TruckInfo info: this.getInfo()){
-            if(info.getItemType()==itemType) return info.getRatePerKmPerKg()*weight*distance+ info.getOtherCharges();
+            if(info.getItemType()==itemType) return (info.getRatePerKmPerKg()*weight*distance + info.getOtherCharges());
         }
         return 0;
+    }
+    public  boolean checkIfTruckSupportsItemType(ItemTypeEnum itemType){
+        for(TruckInfo info: this.getInfo()) if(info.getItemType()==itemType) return true;
+        return false;
     }
 }
