@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class AssignableCarriersCostSortedResponseDTO {
-    private long id;
+    private long carrierId;
 
     private String name;
 

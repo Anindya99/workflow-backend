@@ -9,6 +9,7 @@ import com.blume.workflow.models.Route;
 import com.blume.workflow.models.Truck;
 import com.blume.workflow.models.WorkOrder;
 import com.blume.workflow.repositories.CarrierRepository;
+import com.blume.workflow.repositories.RouteRepository;
 import com.blume.workflow.repositories.WorkOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,9 @@ public class CarrierService {
     private CarrierRepository carrierRepository;
     @Autowired
     private WorkOrderRepository workOrderRepository;
+
+    @Autowired
+    private RouteRepository routeRepository;
 
     public Carrier saveCarrier(Carrier carrier) {
         return this.carrierRepository.save(carrier);
@@ -53,7 +57,8 @@ public class CarrierService {
     public List<AssignableCarriersCostSortedResponseDTO> getCarrierListBasedOnBudget(long workOrderId){
         WorkOrder workOrder = this.workOrderRepository.findById(workOrderId)
                 .orElseThrow(() -> new NoSuchElementException("No work order found with id- " + workOrderId));
-        Route workOrderRoute = workOrder.getRoute();
+        Route workOrderRoute = routeRepository.findById(workOrder.getRoute().getId())
+                .orElseThrow(() -> new NoSuchElementException("No route found for work order id- " + workOrderId));;
         ItemTypeEnum itemType = workOrder.getItemType();
         LoadTypeEnum loadType = workOrder.getLoadType();
         int grossWeight = workOrder.getWeight();
@@ -181,7 +186,7 @@ public class CarrierService {
 
     private AssignableCarriersCostSortedResponseDTO convertToAssignableCarriersCostSortedDto(Carrier carrier,int cost){
         return AssignableCarriersCostSortedResponseDTO.builder()
-                .id(carrier.getId())
+                .carrierId(carrier.getId())
                 .name(carrier.getName())
                 .cost(cost)
                 .status(WorkOrderStatusEnum.UNASSIGNED)

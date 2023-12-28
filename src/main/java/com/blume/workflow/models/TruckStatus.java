@@ -27,8 +27,8 @@ public class TruckStatus {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinTable(
-            name = "work_order_route",
-            joinColumns = @JoinColumn(name = "work_order_id",referencedColumnName = "id"),
+            name = "truck_route",
+            joinColumns = @JoinColumn(name = "truck_status_id",referencedColumnName = "id"),
             inverseJoinColumns ={
                     @JoinColumn(name = "route_origin", referencedColumnName = "origin"),
                     @JoinColumn(name = "route_destination", referencedColumnName = "destination")}

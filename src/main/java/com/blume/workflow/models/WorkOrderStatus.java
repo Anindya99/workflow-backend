@@ -1,6 +1,7 @@
 package com.blume.workflow.models;
 
 import com.blume.workflow.enums.WorkOrderStatusEnum;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,8 +26,8 @@ public class WorkOrderStatus {
     @Builder.Default
     private int assignedCarrierId=0;
 
-    @OneToOne
-    @JoinColumn(name = "work_order_id",referencedColumnName = "id")
+    @OneToOne(mappedBy = "workOrderStatus")
+    @JsonIgnore
     private WorkOrder workOrder;
 
 

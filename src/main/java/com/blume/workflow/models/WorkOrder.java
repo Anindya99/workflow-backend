@@ -47,7 +47,8 @@ public class WorkOrder {
     @JsonBackReference(value="workFlow-workOrder")
     private WorkFlow workFlow;
 
-    @OneToOne(mappedBy = "workOrder",cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "work_order_status_id",referencedColumnName = "id")
     private WorkOrderStatus workOrderStatus;
 
     @OneToMany(mappedBy = "workOrder",cascade = CascadeType.ALL)
